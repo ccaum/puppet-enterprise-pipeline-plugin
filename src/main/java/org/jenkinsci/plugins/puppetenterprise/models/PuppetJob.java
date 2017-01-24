@@ -5,6 +5,7 @@ import java.util.*;
 import org.jenkinsci.plugins.puppetenterprise.apimanagers.puppetorchestratorv1.PuppetOrchestratorException;
 import org.jenkinsci.plugins.puppetenterprise.apimanagers.puppetorchestratorv1.PuppetCommandDeployV1;
 import org.jenkinsci.plugins.puppetenterprise.apimanagers.puppetorchestratorv1.PuppetJobsIDV1;
+import org.jenkinsci.plugins.puppetenterprise.apimanagers.puppetorchestratorv1.puppetjobreportv1.*;
 import org.jenkinsci.plugins.puppetenterprise.apimanagers.puppetorchestratorv1.puppetnodev1.*;
 import org.jenkinsci.plugins.puppetenterprise.apimanagers.PERequest;
 import com.google.gson.internal.LinkedTreeMap;
@@ -14,6 +15,7 @@ public class PuppetJob {
   private String name = null;
   private String token = null;
   private ArrayList<PuppetNodeItemV1> nodes = null;
+  private ArrayList<PuppetJobReportNodeV1> report = null;
   private Integer nodeCount = null;
   private LinkedTreeMap scope = new LinkedTreeMap();
   private String target = null;
@@ -97,6 +99,7 @@ public class PuppetJob {
     } while(isRunning());
 
     updateNodes();
+    updateReport();
   }
 
   public void start() throws PuppetOrchestratorException, Exception {
@@ -129,6 +132,7 @@ public class PuppetJob {
   public void stop() throws PuppetOrchestratorException, Exception {
     //TODO: Add ability to stop a running job
     updateNodes();
+    updateReport();
   }
 
   public Boolean failed() {
@@ -154,10 +158,15 @@ public class PuppetJob {
   public void update() throws PuppetOrchestratorException, Exception {
     updateState();
     updateNodes();
+    updateReport();
   }
 
   private void updateNodes() throws PuppetOrchestratorException, Exception {
     this.nodes = this.job.getNodes();
+  }
+
+  private void updateReport() throws PuppetOrchestratorException, Exception {
+    this.report = this.job.getReport();
   }
 
   private Boolean isEnvironmentEnforced() {
@@ -177,7 +186,7 @@ public class PuppetJob {
       formattedReport.append("Environment: " + this.environment + "\n");
     }
 
-    formattedReport.append("Nodes: " + this.nodeCount + "\n\n");
+    formattedReport.append("Resource events node summary: " + this.nodeCount + "\n\n");
 
     for (PuppetNodeItemV1 node : this.nodes) {
       formattedReport.append(node.getName() + "\n");
@@ -211,6 +220,24 @@ public class PuppetJob {
           formattedReport.append("  " + node.getMessage() + "\n");
           formattedReport.append("\n");
         }
+      }
+    }
+
+    formattedReport.append("\n\nResource events details:\n\n");
+
+    for (PuppetJobReportNodeV1 reportnode : this.report) {
+      formattedReport.append(reportnode.getNode() + "\n");
+
+      if (reportnode.getEvents().size() > 0) {
+        for (PuppetJobReportNodeEventV1 event: reportnode.getEvents()) {
+          formattedReport.append("  " + event.getResourceType().toUpperCase() + "[" + event.getResourceTitle() + "]");
+          formattedReport.append("    Property: " + event.getProperty());
+          formattedReport.append("    Old value: " + event.getOldValue());
+          formattedReport.append("    New value: " + event.getNewValue());
+          formattedReport.append("    Message: " + event.getMessage());
+        }
+      } else {
+        formattedReport.append("  0 resource events");
       }
     }
 

@@ -11,6 +11,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import org.jenkinsci.plugins.puppetenterprise.apimanagers.PEResponse;
 import org.jenkinsci.plugins.puppetenterprise.apimanagers.PuppetOrchestratorV1;
+import org.jenkinsci.plugins.puppetenterprise.apimanagers.puppetorchestratorv1.puppetjobreportv1.*;
 import org.jenkinsci.plugins.puppetenterprise.apimanagers.puppetorchestratorv1.puppetnodev1.*;
 import org.jenkinsci.plugins.puppetenterprise.apimanagers.puppetorchestratorv1.PuppetOrchestratorException;
 
@@ -20,6 +21,7 @@ public class PuppetJobsIDV1 extends PuppetOrchestratorV1 {
   private String name = "";
   private String state = "";
   private ArrayList<PuppetNodeItemV1> nodes = new ArrayList();
+  private ArrayList<PuppetJobReportNodeV1> report = new ArrayList();
   private Integer nodeCount = null;
   private String environment = "";
   Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
@@ -47,6 +49,20 @@ public class PuppetJobsIDV1 extends PuppetOrchestratorV1 {
 
   public String getName() {
     return this.name;
+  }
+
+  public ArrayList<PuppetJobReportNodeV1> getReport() throws URISyntaxException, Exception {
+    URI uri = response.getReportURL().toURI();
+    PEResponse peResponse = send(uri);
+
+    if (isSuccessful(peResponse)) {
+      report = gson.fromJson(peResponse.getJSON(), PuppetJobReportV1.class).getReport();
+    } else {
+      PuppetJobsIDError error = gson.fromJson(peResponse.getJSON(), PuppetJobsIDError.class);
+      throw new PuppetOrchestratorException(error.kind, error.msg, error.details);
+    }
+
+    return report;
   }
 
   public ArrayList<PuppetNodeItemV1> getNodes() throws URISyntaxException, Exception {
