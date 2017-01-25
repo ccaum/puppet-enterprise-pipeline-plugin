@@ -131,8 +131,20 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
       job.setConcurrency(step.getConcurrency());
       job.setNoop(step.getNoop());
       job.setEnvironment(step.getEnvironment());
-      job.setToken(step.getToken());
       job.setLogger(listener.getLogger());
+
+      try {
+        job.setToken(step.getToken());
+      } catch(java.lang.NullPointerException e) {
+        String summary = "Could not find Jenkins credential with ID: " + step.getCredentialsId() + "\n";
+        StringBuilder message = new StringBuilder();
+
+        message.append(summary);
+        message.append("Please ensure the credentials exist in Jenkins. Note, the credentials description is not its ID\n");
+
+        listener.getLogger().println(message.toString());
+        throw new PEException(summary);
+      }
 
       // Target is still supported to support older versions of PE.
       // 2016.4 installs of PE should use the scope parameter when
