@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.Date;
 import com.google.gson.internal.LinkedTreeMap;
 
-public class PuppetJobReportNodeMetricsV1 {
+public class PuppetJobReportNodeMetricsV1 implements Serializable {
   private PuppetJobReportNodeMetricsResources resources = null;
   private LinkedTreeMap<String,Float> time = null;
   private PuppetJobReportNodeMetricsChanges changes = null;
@@ -15,7 +15,7 @@ public class PuppetJobReportNodeMetricsV1 {
     return this.time;
   }
 
-  class PuppetJobReportNodeMetricsResources {
+  class PuppetJobReportNodeMetricsResources implements Serializable {
     public Integer total = null;
     public Integer out_of_sync = null;
     public Integer corrective_change = null;
@@ -27,11 +27,11 @@ public class PuppetJobReportNodeMetricsV1 {
     public Integer skipped = null;
   }
 
-  class PuppetJobReportNodeMetricsChanges {
+  class PuppetJobReportNodeMetricsChanges implements Serializable {
     public Integer total = null;
   }
 
-  class PuppetJobReportNodeMetricsEvents {
+  class PuppetJobReportNodeMetricsEvents implements Serializable {
     public Integer failure = null;
     public Integer success = null;
     public Integer total = null;

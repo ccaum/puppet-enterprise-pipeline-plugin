@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.Date;
 import com.google.gson.internal.LinkedTreeMap;
 
-public class PuppetJobReportNodeEventV1 {
+public class PuppetJobReportNodeEventV1 implements Serializable {
   private String new_value = null;
   private String report = null;
   private Boolean corrective_change = null;
