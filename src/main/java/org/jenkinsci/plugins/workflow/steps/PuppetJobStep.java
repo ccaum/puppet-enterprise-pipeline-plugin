@@ -44,6 +44,7 @@ import com.google.gson.internal.LinkedTreeMap;
 
 import org.jenkinsci.plugins.puppetenterprise.PuppetEnterpriseManagement;
 import org.jenkinsci.plugins.puppetenterprise.models.PuppetJob;
+import org.jenkinsci.plugins.puppetenterprise.models.PuppetJobReport;
 import org.jenkinsci.plugins.puppetenterprise.apimanagers.puppetorchestratorv1.PuppetOrchestratorException;
 import org.jenkinsci.plugins.puppetenterprise.models.PEException;
 
@@ -116,7 +117,7 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
 
   @DataBoundConstructor public PuppetJobStep() { }
 
-  public static class PuppetJobStepExecution extends AbstractSynchronousStepExecution<Void> {
+  public static class PuppetJobStepExecution extends AbstractSynchronousStepExecution<PuppetJobReport> {
 
     @Inject private transient PuppetJobStep step;
     @StepContextParameter private transient Run<?, ?> run;
@@ -126,7 +127,7 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
       value = "DLS_DEAD_LOCAL_STORE",
       justification = "Findbugs is wrong. The variable is not a dead store."
     )
-    @Override protected Void run() throws Exception {
+    @Override protected PuppetJobReport run() throws Exception {
       PuppetJob job = new PuppetJob();
       job.setConcurrency(step.getConcurrency());
       job.setNoop(step.getNoop());
@@ -171,7 +172,7 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
         throw new PEException(message.toString(), listener);
       }
 
-      return null;
+      return job.generateRunReport();
     }
 
     private static final long serialVersionUID = 1L;
