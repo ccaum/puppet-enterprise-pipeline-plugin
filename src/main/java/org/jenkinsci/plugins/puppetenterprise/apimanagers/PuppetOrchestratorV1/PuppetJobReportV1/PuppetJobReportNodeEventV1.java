@@ -27,6 +27,11 @@ public class PuppetJobReportNodeEventV1 implements Serializable {
   private String certname = null;
   private String message = null;
 
+  public String getResourceName() {
+    String resource_type = (getResourceType().substring(0,1).toUpperCase() + getResourceType().substring(1));
+    return (resource_type + "[" + getResourceTitle() + "]");
+  }
+
   public String getNewValue() {
     return this.new_value;
   }
