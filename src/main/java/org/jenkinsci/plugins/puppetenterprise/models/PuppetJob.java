@@ -147,6 +147,50 @@ public class PuppetJob {
     return (!this.state.equals("finished") && !this.state.equals("stopped") && !this.state.equals("failed"));
   }
 
+  public Integer getNodeCount() {
+    return this.nodeCount;
+  }
+
+  public LinkedTreeMap getScope() {
+    return this.scope;
+  }
+
+  public String getTarget() {
+    return this.target;
+  }
+
+  public String getEnvironment() {
+    return this.environment;
+  }
+
+  public Integer getConcurrency() {
+    return this.concurrency;
+  }
+
+  public Boolean getEnforceEnvironment() {
+    return this.enforceEnvironment;
+  }
+
+  public Boolean getDebug() {
+    return this.debug;
+  }
+
+  public Boolean getTrace() {
+    return this.trace;
+  }
+
+  public Boolean getNoop() {
+    return this.noop;
+  }
+
+  public Boolean getEvalTrace() {
+    return this.evalTrace;
+  }
+
+  public PuppetJobReport generateRunReport() {
+    return new PuppetJobReport(this);
+  }
+
   public void updateState() throws PuppetOrchestratorException, Exception {
     this.job.setToken(this.token);
     this.job.execute();
@@ -159,6 +203,14 @@ public class PuppetJob {
     updateState();
     updateNodes();
     updateReport();
+  }
+
+  public ArrayList<PuppetNodeItemV1> getNodes() {
+    return this.nodes;
+  }
+
+  public ArrayList<PuppetJobReportNodeV1> getNodeReports() {
+    return this.report;
   }
 
   private void updateNodes() throws PuppetOrchestratorException, Exception {
