@@ -238,7 +238,7 @@ public class PuppetJob {
       formattedReport.append("Environment: " + this.environment + "\n");
     }
 
-    formattedReport.append("Resource events node summary: " + this.nodeCount + "\n\n");
+    formattedReport.append("Nodes: " + this.nodeCount + "\n\n");
 
     for (PuppetNodeItemV1 node : this.nodes) {
       formattedReport.append(node.getName() + "\n");
@@ -272,24 +272,6 @@ public class PuppetJob {
           formattedReport.append("  " + node.getMessage() + "\n");
           formattedReport.append("\n");
         }
-      }
-    }
-
-    formattedReport.append("\n\nResource events details:\n\n");
-
-    for (PuppetJobReportNodeV1 reportnode : this.report) {
-      formattedReport.append(reportnode.getNode() + "\n");
-
-      if (reportnode.getEvents().size() > 0) {
-        for (PuppetJobReportNodeEventV1 event: reportnode.getEvents()) {
-          formattedReport.append("  " + event.getResourceType().toUpperCase() + "[" + event.getResourceTitle() + "]");
-          formattedReport.append("    Property: " + event.getProperty());
-          formattedReport.append("    Old value: " + event.getOldValue());
-          formattedReport.append("    New value: " + event.getNewValue());
-          formattedReport.append("    Message: " + event.getMessage());
-        }
-      } else {
-        formattedReport.append("  0 resource events");
       }
     }
 
