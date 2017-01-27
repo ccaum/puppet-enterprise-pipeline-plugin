@@ -91,8 +91,9 @@ public class PuppetJobReport implements Serializable {
     formattedReport.append("Resources with changes:\n\n");
 
     for (PuppetResource reportResource : collectResourceEvents()) {
+      formattedReport.append("    " + reportResource.getName()  + "\n");
+
       for (PuppetJobReportNodeEventV1 event: reportResource.getEvents()) {
-        formattedReport.append("    " + event.getResourceName()  + "\n");
         formattedReport.append("      Certname: " + event.getCertname() + "\n");
         formattedReport.append("      Property: " + event.getProperty() + "\n");
         formattedReport.append("      Old value: " + event.getOldValue() + "\n");
@@ -128,6 +129,24 @@ public class PuppetJobReport implements Serializable {
     return formattedReport.toString();
   }
 
+  //Returns -1 if not found
+  private Integer containsResource(ArrayList<PuppetResource> resources, PuppetResource resource) {
+    Integer index = -1;
+
+    //Don't bother looking if there's nothing to look for
+    if (resources.size() == 0) {
+      return index;
+    }
+
+    for (Integer i = 0; i < resources.size(); i = i + 1) {
+      if (resource.getName().equals(resources.get(i).getName())) {
+        index = i;
+      }
+    }
+
+    return index;
+  }
+
   private ArrayList<PuppetResource> collectResourceEvents() {
     ArrayList<PuppetResource> resources = new ArrayList();
 
@@ -135,8 +154,12 @@ public class PuppetJobReport implements Serializable {
       for (PuppetJobReportNodeEventV1 nodeEvent : reportnode.getEvents()) {
         PuppetResource resource = new PuppetResource(nodeEvent.getResourceName());
 
-        if (resources.contains(resource)) {
-          resources.get(resources.indexOf(resource)).addEvent(nodeEvent);
+        Integer resourceIndex = containsResource(resources, resource);
+        if (resourceIndex >= 0) {
+          resources.get(resourceIndex).addEvent(nodeEvent);
+        } else {
+          resource.addEvent(nodeEvent);
+          resources.add(resource);
         }
       }
     }
