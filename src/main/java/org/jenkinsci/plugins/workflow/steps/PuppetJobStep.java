@@ -145,14 +145,11 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
       }
 
       try {
-        StringBuilder message = new StringBuilder();
         String summary = "";
 
         job.run();
 
-        summary = "Puppet job " + job.getName() + " " + job.getState() + "\n---------\n";
-        message.append(summary);
-        message.append(job.formatReport());
+        summary = "Puppet job " + job.getName() + " " + job.getState() + "\n";
 
         listener.getLogger().println(job.formatReport());
 
