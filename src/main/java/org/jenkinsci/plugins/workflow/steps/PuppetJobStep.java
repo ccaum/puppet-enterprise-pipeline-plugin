@@ -172,7 +172,22 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
         throw new PEException(message.toString(), listener);
       }
 
-      return job.generateRunReport();
+      PuppetJobReport jobResult = null;
+
+      try {
+        jobResult = job.generateRunReport();
+      } catch(Exception e) {
+        throw new PEException("Could not generate Puppet job report object. Reason given: " + e.getMessage(), listener);
+      }
+
+      //If it's null it will be impossible for the user to know if it's them or the plugin.
+      // It should never be null, but if it ever is, it's better to let the user know it's
+      // not their fault.
+      if (jobResult == null) {
+        throw new PEException("Could not generate Puppet job report object. Object returned null for unknown reasons.", listener);
+      }
+
+      return jobResult;
     }
 
     private static final long serialVersionUID = 1L;
