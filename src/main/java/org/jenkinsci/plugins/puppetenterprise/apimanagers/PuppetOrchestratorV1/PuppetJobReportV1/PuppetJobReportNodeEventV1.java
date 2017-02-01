@@ -6,13 +6,13 @@ import java.util.Date;
 import com.google.gson.internal.LinkedTreeMap;
 
 public class PuppetJobReportNodeEventV1 implements Serializable {
-  private String new_value = null;
+  private Object new_value = null;
   private String report = null;
   private Boolean corrective_change = null;
   private Date run_start_time = null;
   private String property = null;
   private String file = null;
-  private String old_value = null;
+  private Object old_value = null;
   private String containing_class = null;
   private String line = null;
   private String resource_type = null;
@@ -32,8 +32,21 @@ public class PuppetJobReportNodeEventV1 implements Serializable {
     return (resource_type + "[" + getResourceTitle() + "]");
   }
 
-  public String getNewValue() {
-    return this.new_value;
+  public Object getNewValue() {
+    Object returnObject = null;
+
+    //Gson defaults to Double for numbers, which means int values returned
+    // by Puppet will show 1.0 intead of 1, for example. This checks if its
+    // a Double and converts it to a Integer if the number is cleanly divisible
+    if (this.new_value instanceof Double) {
+      if (((Double) this.new_value % 1) == 0) {
+        returnObject = (int) Math.round((Double) this.new_value);
+      }
+    } else {
+      returnObject = this.new_value;
+    }
+
+    return returnObject;
   }
 
   public String getReport() {
@@ -56,8 +69,21 @@ public class PuppetJobReportNodeEventV1 implements Serializable {
     return this.file;
   }
 
-  public String getOldValue() {
-    return this.old_value;
+  public Object getOldValue() {
+    Object returnObject = null;
+
+    //Gson defaults to Double for numbers, which means int values returned
+    // by Puppet will show 1.0 intead of 1, for example. This checks if its
+    // a Double and converts it to a Integer if the number is cleanly divisible
+    if (this.old_value instanceof Double) {
+      if (((Double) this.old_value % 1) == 0) {
+        returnObject = (int) Math.round((Double) this.old_value);
+      }
+    } else {
+      returnObject = this.old_value;
+    }
+
+    return returnObject;
   }
 
   public String getContainingClass() {
