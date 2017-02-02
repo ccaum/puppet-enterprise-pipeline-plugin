@@ -247,7 +247,8 @@ public class PuppetJob {
         formattedReport.append("  Environment: " + node.getEnvironment() + "\n");
       }
 
-      if (node.getMetrics() != null) {
+      //There will be no metrics if the run failed
+      if (!node.getState().equals("failed")) {
         PuppetNodeMetricsV1 metrics = node.getMetrics();
 
         formattedReport.append("  Resource Events: ");
