@@ -58,6 +58,7 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
   private Boolean noop = false;
   private String environment = null;
   private String credentialsId = "";
+  private Boolean failOnFailure = true;
 
   @DataBoundSetter private void setTarget(String target) {
     this.target = Util.fixEmpty(target);
@@ -77,6 +78,10 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
 
   @DataBoundSetter private void setQuery(String query) {
     this.query = query;
+  }
+
+  @DataBoundSetter private void setFailOnFailure(Boolean failOnFailure) {
+    this.failOnFailure = failOnFailure;
   }
 
   @DataBoundSetter private void setNodes(ArrayList nodes) {
@@ -113,6 +118,10 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
 
   public Boolean getNoop() {
     return this.noop;
+  }
+
+  public Boolean getFailOnFailure() {
+    return this.failOnFailure;
   }
 
   @DataBoundConstructor public PuppetJobStep() { }
@@ -153,8 +162,15 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
 
         listener.getLogger().println(job.formatReport());
 
+        //If the user does not want to fail the
+        // Jenkins job if the Puppet job fails, then
+        // just print an error instead
         if (job.failed() || job.stopped()) {
-          throw new Exception(summary);
+          if (step.getFailOnFailure()) {
+            throw new Exception(summary);
+          } else {
+            listener.error(summary);
+          }
         }
       } catch(PuppetOrchestratorException e) {
         StringBuilder message = new StringBuilder();

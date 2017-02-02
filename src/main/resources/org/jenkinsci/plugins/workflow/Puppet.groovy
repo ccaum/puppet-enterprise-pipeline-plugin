@@ -57,6 +57,7 @@ class Puppet implements Serializable {
     String target = null
     ArrayList nodes = null
     Boolean noop = false
+    Boolean failOnFailure = true
     Integer concurrency = null
 
     node {
@@ -101,8 +102,13 @@ class Puppet implements Serializable {
         script.error(message: "No Credentials provided for puppet.run. Specify 'credentials' parameter or use puppet.credentials()")
       }
 
+      if (parameters.failOnFailure != null) {
+        assert parameters.failOnFailure instanceof Boolean
+        failOnFailure = parameters.failOnFailure
+      }
+
       try {
-        script.puppetJob(environment: env, target: target, concurrency: concurrency, credentialsId: credentials, nodes: nodes, query: query, application: application, noop: noop)
+        script.puppetJob(environment: env, target: target, concurrency: concurrency, credentialsId: credentials, nodes: nodes, query: query, application: application, noop: noop, failOnFailure: failOnFailure)
       } catch(err) {
         script.error(message: err.message)
       }
