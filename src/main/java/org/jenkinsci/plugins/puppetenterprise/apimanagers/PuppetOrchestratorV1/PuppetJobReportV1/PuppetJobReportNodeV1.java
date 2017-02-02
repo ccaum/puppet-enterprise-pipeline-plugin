@@ -15,6 +15,7 @@ public class PuppetJobReportNodeV1 implements Serializable {
   private String certname = null;
   private String transaction_uuid = null;
   private String environment = null;
+  private String configuration_version = null;
   private PuppetJobReportNodeMetricsV1 metrics = null;
 
   public String getNode() {
@@ -27,6 +28,10 @@ public class PuppetJobReportNodeV1 implements Serializable {
 
   public Date getTimestamp() {
     return this.timestamp;
+  }
+
+  public String getConfigurationVersion() {
+    return this.configuration_version;
   }
 
   public ArrayList<PuppetJobReportNodeEventV1> getEvents() {

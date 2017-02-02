@@ -94,11 +94,11 @@ public class PuppetJobReport implements Serializable {
       formattedReport.append("    " + reportResource.getName()  + "\n");
 
       for (PuppetJobReportNodeEventV1 event: reportResource.getEvents()) {
-        formattedReport.append("      Certname: " + event.getCertname() + "\n");
-        formattedReport.append("      Property: " + event.getProperty() + "\n");
+        formattedReport.append("      Certname:  " + event.getCertname() + "\n");
+        formattedReport.append("      Property:  " + event.getProperty() + "\n");
         formattedReport.append("      Old value: " + event.getOldValue() + "\n");
         formattedReport.append("      New value: " + event.getNewValue() + "\n");
-        formattedReport.append("      Message: " + event.getMessage() + "\n\n");
+        formattedReport.append("      Message:   " + event.getMessage() + "\n\n");
       }
     }
 
@@ -116,10 +116,10 @@ public class PuppetJobReport implements Serializable {
       if (reportnode.getEvents().size() > 0) {
         for (PuppetJobReportNodeEventV1 event: reportnode.getEvents()) {
           formattedReport.append("    " + event.getResourceName()  + "\n");
-          formattedReport.append("      Property: " + event.getProperty() + "\n");
+          formattedReport.append("      Property:  " + event.getProperty() + "\n");
           formattedReport.append("      Old value: " + event.getOldValue() + "\n");
           formattedReport.append("      New value: " + event.getNewValue() + "\n");
-          formattedReport.append("      Message: " + event.getMessage() + "\n\n");
+          formattedReport.append("      Message:   " + event.getMessage() + "\n\n");
         }
       } else {
         formattedReport.append("    0 resource events");
