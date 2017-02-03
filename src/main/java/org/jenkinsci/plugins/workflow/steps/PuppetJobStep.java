@@ -44,7 +44,6 @@ import com.google.gson.internal.LinkedTreeMap;
 
 import org.jenkinsci.plugins.puppetenterprise.PuppetEnterpriseManagement;
 import org.jenkinsci.plugins.puppetenterprise.models.PuppetJob;
-import org.jenkinsci.plugins.puppetenterprise.models.PuppetJobReport;
 import org.jenkinsci.plugins.puppetenterprise.models.UnknownPuppetJobReportType;
 import org.jenkinsci.plugins.puppetenterprise.apimanagers.puppetorchestratorv1.PuppetOrchestratorException;
 import org.jenkinsci.plugins.puppetenterprise.models.PEException;
@@ -59,7 +58,6 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
   private Boolean noop = false;
   private String environment = null;
   private String credentialsId = "";
-  private Boolean failOnFailure = true;
   private ArrayList<String> reports = null;
 
   @DataBoundSetter private void setTarget(String target) {
@@ -80,10 +78,6 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
 
   @DataBoundSetter private void setQuery(String query) {
     this.query = query;
-  }
-
-  @DataBoundSetter private void setFailOnFailure(Boolean failOnFailure) {
-    this.failOnFailure = failOnFailure;
   }
 
   @DataBoundSetter private void setReports(ArrayList reports) {
@@ -126,17 +120,13 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
     return this.noop;
   }
 
-  public Boolean getFailOnFailure() {
-    return this.failOnFailure;
-  }
-
   public ArrayList<String> getReports() {
     return this.reports;
   }
 
   @DataBoundConstructor public PuppetJobStep() { }
 
-  public static class PuppetJobStepExecution extends AbstractSynchronousStepExecution<PuppetJobReport> {
+  public static class PuppetJobStepExecution extends AbstractSynchronousStepExecution<Void> {
 
     @Inject private transient PuppetJobStep step;
     @StepContextParameter private transient Run<?, ?> run;
@@ -146,7 +136,7 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
       value = "DLS_DEAD_LOCAL_STORE",
       justification = "Findbugs is wrong. The variable is not a dead store."
     )
-    @Override protected PuppetJobReport run() throws Exception {
+    @Override protected Void run() throws Exception {
       PuppetJob job = new PuppetJob();
       job.setConcurrency(step.getConcurrency());
       job.setNoop(step.getNoop());
@@ -176,15 +166,8 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
           throw new Exception(e.getMessage());
         }
 
-        //If the user does not want to fail the
-        // Jenkins job if the Puppet job fails, then
-        // just print an error instead
         if (job.failed() || job.stopped()) {
-          if (step.getFailOnFailure()) {
-            throw new Exception(summary);
-          } else {
-            listener.error(summary);
-          }
+          throw new Exception(summary);
         }
       } catch(PuppetOrchestratorException e) {
         StringBuilder message = new StringBuilder();
@@ -199,22 +182,7 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
         throw new PEException(message.toString(), listener);
       }
 
-      PuppetJobReport jobResult = null;
-
-      try {
-        jobResult = job.generateRunReport();
-      } catch(Exception e) {
-        throw new PEException("Could not generate Puppet job report object. Reason given: " + e.getMessage(), listener);
-      }
-
-      //If it's null it will be impossible for the user to know if it's them or the plugin.
-      // It should never be null, but if it ever is, it's better to let the user know it's
-      // not their fault.
-      if (jobResult == null) {
-        throw new PEException("Could not generate Puppet job report object. Object returned null for unknown reasons.", listener);
-      }
-
-      return jobResult;
+      return null;
     }
 
     private static final long serialVersionUID = 1L;

@@ -34,20 +34,6 @@ import org.jenkinsci.plugins.workflow.cps.GlobalVariable;
         "method java.lang.Class isInstance java.lang.Object",
         "method java.lang.Throwable getMessage",
         "staticMethod java.lang.System getenv java.lang.String",
-        "method org.jenkinsci.plugins.puppetenterprise.models.PuppetJobReport formatResourcesReport",
-        "method org.jenkinsci.plugins.puppetenterprise.models.PuppetJobReport formatNodesReport",
-        "method org.jenkinsci.plugins.puppetenterprise.models.PuppetJobReport getName",
-        "method org.jenkinsci.plugins.puppetenterprise.models.PuppetJobReport getState",
-        "method org.jenkinsci.plugins.puppetenterprise.models.PuppetJobReport getNodeCount",
-        "method org.jenkinsci.plugins.puppetenterprise.models.PuppetJobReport getScope",
-        "method org.jenkinsci.plugins.puppetenterprise.models.PuppetJobReport getTarget",
-        "method org.jenkinsci.plugins.puppetenterprise.models.PuppetJobReport getEnvironment",
-        "method org.jenkinsci.plugins.puppetenterprise.models.PuppetJobReport getConcurrency",
-        "method org.jenkinsci.plugins.puppetenterprise.models.PuppetJobReport getEnforceEnvironment",
-        "method org.jenkinsci.plugins.puppetenterprise.models.PuppetJobReport getDebug",
-        "method org.jenkinsci.plugins.puppetenterprise.models.PuppetJobReport getTrace",
-        "method org.jenkinsci.plugins.puppetenterprise.models.PuppetJobReport getNoop",
-        "method org.jenkinsci.plugins.puppetenterprise.models.PuppetJobReport getEvalTrace",
         "method groovy.lang.GroovyObject invokeMethod java.lang.String java.lang.Object"));
     }
   }

@@ -11,7 +11,7 @@ import org.jenkinsci.plugins.puppetenterprise.apimanagers.PERequest;
 import org.jenkinsci.plugins.puppetenterprise.models.UnknownPuppetJobReportType;
 import com.google.gson.internal.LinkedTreeMap;
 
-public class PuppetJob implements Serializable {
+public class PuppetJob {
   private String state = null;
   private String name = null;
   private String token = null;
