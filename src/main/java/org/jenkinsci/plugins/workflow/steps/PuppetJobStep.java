@@ -45,6 +45,7 @@ import com.google.gson.internal.LinkedTreeMap;
 import org.jenkinsci.plugins.puppetenterprise.PuppetEnterpriseManagement;
 import org.jenkinsci.plugins.puppetenterprise.models.PuppetJob;
 import org.jenkinsci.plugins.puppetenterprise.models.PuppetJobReport;
+import org.jenkinsci.plugins.puppetenterprise.models.UnknownPuppetJobReportType;
 import org.jenkinsci.plugins.puppetenterprise.apimanagers.puppetorchestratorv1.PuppetOrchestratorException;
 import org.jenkinsci.plugins.puppetenterprise.models.PEException;
 
@@ -59,6 +60,7 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
   private String environment = null;
   private String credentialsId = "";
   private Boolean failOnFailure = true;
+  private ArrayList<String> reports = null;
 
   @DataBoundSetter private void setTarget(String target) {
     this.target = Util.fixEmpty(target);
@@ -82,6 +84,10 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
 
   @DataBoundSetter private void setFailOnFailure(Boolean failOnFailure) {
     this.failOnFailure = failOnFailure;
+  }
+
+  @DataBoundSetter private void setReports(ArrayList reports) {
+    this.reports = reports;
   }
 
   @DataBoundSetter private void setNodes(ArrayList nodes) {
@@ -124,6 +130,10 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
     return this.failOnFailure;
   }
 
+  public ArrayList<String> getReports() {
+    return this.reports;
+  }
+
   @DataBoundConstructor public PuppetJobStep() { }
 
   public static class PuppetJobStepExecution extends AbstractSynchronousStepExecution<PuppetJobReport> {
@@ -160,7 +170,11 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
 
         summary = "Puppet job " + job.getName() + " " + job.getState() + "\n";
 
-        listener.getLogger().println(job.formatReport());
+        try {
+          listener.getLogger().println(job.generateReport(step.getReports()));
+        } catch(UnknownPuppetJobReportType e) {
+          throw new Exception(e.getMessage());
+        }
 
         //If the user does not want to fail the
         // Jenkins job if the Puppet job fails, then

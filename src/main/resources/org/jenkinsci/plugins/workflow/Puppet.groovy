@@ -59,8 +59,19 @@ class Puppet implements Serializable {
     Boolean noop = false
     Boolean failOnFailure = true
     Integer concurrency = null
+    ArrayList reports = null
 
     node {
+      if (parameters.reports) {
+        if (parameters.reports instanceof String) {
+          reports << parameters.reports
+        } else if (parameters.reports instanceof ArrayList<String>) {
+          reports = parameters.reports
+        } else {
+          throw "Unknown reports type"
+        }
+      }
+
       if (parameters.credentials) {
         credentials = parameters.credentials
       } else {
@@ -108,7 +119,7 @@ class Puppet implements Serializable {
       }
 
       try {
-        script.puppetJob(environment: env, target: target, concurrency: concurrency, credentialsId: credentials, nodes: nodes, query: query, application: application, noop: noop, failOnFailure: failOnFailure)
+        script.puppetJob(environment: env, target: target, concurrency: concurrency, credentialsId: credentials, nodes: nodes, query: query, application: application, noop: noop, failOnFailure: failOnFailure, reports: reports)
       } catch(err) {
         script.error(message: err.message)
       }
